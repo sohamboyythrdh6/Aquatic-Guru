@@ -52,19 +52,21 @@ function calculateDelivery(){
     return;
   }
 
-  // SAME AREA (exact match)
-  if(pin === sellerPin){
+  // RESET delivery first
+  delivery = 0;
+
+  if(pin === "721152"){
     delivery = 40;
   }
-  // SAME DISTRICT (first 3 digits match)
-  else if(pin.substring(0,3) === sellerPin.substring(0,3)){
+  else if(pin.substring(0,3) === "721"){
     delivery = 70;
   }
-  // SAME STATE (West Bengal usually starts with 7)
+  else if(pin.substring(0,2) === "72"){
+    delivery = 100;
+  }
   else if(pin.startsWith("7")){
     delivery = 120;
   }
-  // OTHER STATES
   else{
     delivery = 200;
   }
