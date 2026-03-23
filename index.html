@@ -1,3 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Aquatic Guru</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body { font-family: Arial; background:#0f172a; color:white; text-align:center; }
+.section { margin:20px; padding:20px; background:#1e293b; border-radius:10px; }
+.card { background:#334155; padding:15px; margin:10px; border-radius:10px; }
+button { padding:8px; margin:5px; border:none; border-radius:5px; cursor:pointer; }
+.add { background:#38bdf8; color:white; }
+.checkout { background:#22c55e; color:white; }
+
+#cartBtn {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: #22c55e;
+  border-radius: 50%;
+  font-size:18px;
+}
+
+#cartPopup {
+  display:none;
+  position: fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background:#111;
+  padding:20px;
+  border-radius:10px;
+  width:300px;
+}
+</style>
+
 <script>
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 let delivery = 0;
@@ -7,9 +43,29 @@ function saveCart() {
 }
 
 function addToCart(name, price, type) {
-  cart.push({name, price, type});
+  let found = cart.find(item => item.name === name);
+
+  if(found){
+    found.qty += 1;
+  } else {
+    cart.push({name, price, type, qty: 1});
+  }
+
   saveCart();
   alert(name + " added");
+}
+
+// CHANGE QUANTITY
+function changeQty(name, change){
+  let item = cart.find(i => i.name === name);
+  if(item){
+    item.qty += change;
+    if(item.qty <= 0){
+      cart = cart.filter(i => i.name !== name);
+    }
+    saveCart();
+    updateCart();
+  }
 }
 
 // CLEAR CART
@@ -19,17 +75,18 @@ function clearCart(){
   updateCart();
 }
 
-// OPEN / CLOSE CART
+// OPEN CART
 function openCart(){
   document.getElementById("cartPopup").style.display="block";
   updateCart();
 }
 
+// CLOSE CART
 function closeCart(){
   document.getElementById("cartPopup").style.display="none";
 }
 
-// AUTO CALCULATION
+// DELIVERY CALCULATION
 function calculateDelivery(){
   let pin = document.getElementById("pincode").value;
 
@@ -40,32 +97,25 @@ function calculateDelivery(){
   }
 
   let fishCount = 0;
-  let plantCount = 0;
 
-  // COUNT ITEMS
   cart.forEach(item=>{
-    if(item.type === "fish") fishCount++;
-    if(item.type === "plant") plantCount++;
+    if(item.type === "fish") fishCount += item.qty;
   });
 
-  // 🧠 AUTO BOX SIZE
-  let box = "small";
+  let box = "Small";
 
   if(fishCount > 20){
-    box = "large";
+    box = "Large";
   }
   else if(fishCount > 8){
-    box = "medium";
+    box = "Medium";
   }
 
-  // 📦 WEIGHT BASED COST
   let weightCharge = 0;
+  if(box === "Small") weightCharge = 60;
+  if(box === "Medium") weightCharge = 120;
+  if(box === "Large") weightCharge = 200;
 
-  if(box === "small") weightCharge = 60;
-  if(box === "medium") weightCharge = 120;
-  if(box === "large") weightCharge = 200;
-
-  // 📍 DISTANCE BASE COST
   let base = 0;
 
   if(pin === "721152"){
@@ -83,7 +133,6 @@ function calculateDelivery(){
 
   delivery = base + weightCharge;
 
-  // SHOW BOX TYPE
   document.getElementById("boxInfo").innerText = "Box: " + box;
 
   updateCart();
@@ -96,8 +145,11 @@ function updateCart(){
   let total=0;
 
   cart.forEach(item=>{
-    list.innerHTML += item.name+" - ₹"+item.price+"<br>";
-    total+=item.price;
+    list.innerHTML += item.name + " x" + item.qty + 
+    " ₹" + (item.price * item.qty) +
+    " <button onclick=\"changeQty('" + item.name + "',1)\">+</button>" +
+    " <button onclick=\"changeQty('" + item.name + "',-1)\">-</button><br>";
+    total += item.price * item.qty;
   });
 
   document.getElementById("subtotal").innerText="Subtotal: ₹"+total;
@@ -118,11 +170,11 @@ function checkout(){
   let total=0;
 
   cart.forEach(item=>{
-    msg+=item.name+" - ₹"+item.price+"%0A";
-    total+=item.price;
+    msg+=item.name + " x" + item.qty + " - ₹" + (item.price * item.qty) + "%0A";
+    total+=item.price * item.qty;
   });
 
-  msg+="%0ABox Type: "+document.getElementById("boxInfo").innerText;
+  msg+="%0A" + document.getElementById("boxInfo").innerText;
   msg+="%0ADelivery: ₹"+delivery;
   msg+="%0ATotal: ₹"+(total+delivery);
   msg+="%0A%0APincode: "+pin;
@@ -135,3 +187,66 @@ window.onload = function(){
   updateCart();
 }
 </script>
+
+</head>
+
+<body>
+
+<h1>🐠 Aquatic Guru</h1>
+<p>Premium Fish & Aquarium Plants</p>
+
+<button id="cartBtn" onclick="openCart()">🛒</button>
+
+<div id="cartPopup">
+<h3>Cart</h3>
+
+<div id="cartItems"></div>
+
+<input type="number" id="pincode" placeholder="Enter Pincode" oninput="calculateDelivery()"><br><br>
+
+<p id="boxInfo">Box: -</p>
+<p id="subtotal">Subtotal: ₹0</p>
+<p id="delivery">Delivery: ₹0</p>
+<p id="total">Total: ₹0</p>
+
+<button class="checkout" onclick="checkout()">Order</button>
+<button onclick="clearCart()">Clear Cart</button>
+<button onclick="closeCart()">Close</button>
+</div>
+
+<div class="section">
+<h2>🌿 Plants</h2>
+
+<div class="card">
+<h3>Hygrophila Difformis</h3>
+<p>₹50</p>
+<button class="add" onclick="addToCart('Hygrophila Difformis',50,'plant')">Add to Cart</button>
+</div>
+
+<div class="card">
+<h3>Limnophila Aquatica</h3>
+<p>₹60</p>
+<button class="add" onclick="addToCart('Limnophila Aquatica',60,'plant')">Add to Cart</button>
+</div>
+
+</div>
+
+<div class="section">
+<h2>🐟 Guppies</h2>
+
+<div class="card">
+<h3>24K Gold Dumbo Ear Guppy</h3>
+<p>₹400 (pair)</p>
+<button class="add" onclick="addToCart('24K Gold Dumbo Ear Guppy',400,'fish')">Add to Cart</button>
+</div>
+
+<div class="card">
+<h3>Platinum Red Tail Dumbo Ear Guppy</h3>
+<p>₹350 (pair)</p>
+<button class="add" onclick="addToCart('Platinum Red Tail Dumbo Ear Guppy',350,'fish')">Add to Cart</button>
+</div>
+
+</div>
+
+</body>
+</html>
