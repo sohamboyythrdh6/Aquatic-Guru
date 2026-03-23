@@ -5,108 +5,112 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body {
-  font-family: Arial;
-  background-color: #0f172a;
-  color: white;
-  text-align: center;
-}
+body { font-family: Arial; background:#0f172a; color:white; text-align:center; }
+.section { margin:20px; padding:20px; background:#1e293b; border-radius:10px; }
+.card { background:#334155; padding:15px; margin:10px; border-radius:10px; }
+button { padding:10px; margin:5px; border:none; border-radius:5px; cursor:pointer; }
+.add { background:#38bdf8; color:white; }
+.checkout { background:#22c55e; color:white; }
+img { width:200px; border-radius:10px; }
 
-h1 {
-  color: #38bdf8;
-}
-
-.section {
-  margin: 20px;
-  padding: 20px;
-  border-radius: 10px;
-  background-color: #1e293b;
-}
-
-.card {
-  background: #334155;
+#cart {
+  position: fixed;
+  right: 10px;
+  top: 10px;
+  background: #111;
   padding: 15px;
-  margin: 10px;
   border-radius: 10px;
-}
-
-img {
-  width: 250px;
-  border-radius: 10px;
-}
-
-button {
-  background-color: #22c55e;
-  border: none;
-  padding: 10px;
-  color: white;
-  border-radius: 5px;
-  cursor: pointer;
 }
 </style>
+
+<script>
+let cart = [];
+
+function addToCart(name, price) {
+  cart.push({name, price});
+  alert(name + " added to cart");
+  updateCart();
+}
+
+function updateCart() {
+  let cartDiv = document.getElementById("cartItems");
+  cartDiv.innerHTML = "";
+  let total = 0;
+
+  cart.forEach(item => {
+    cartDiv.innerHTML += item.name + " - ₹" + item.price + "<br>";
+    total += item.price;
+  });
+
+  document.getElementById("total").innerText = "Total: ₹" + total;
+}
+
+function checkout() {
+  if(cart.length === 0){
+    alert("Cart is empty");
+    return;
+  }
+
+  let message = "Hello Aquatic Guru,%0AI want to order:%0A%0A";
+  let total = 0;
+
+  cart.forEach(item => {
+    message += item.name + " - ₹" + item.price + "%0A";
+    total += item.price;
+  });
+
+  message += "%0ATotal: ₹" + total + "%0A%0AMy Name:%0AMy Address:%0AMy Pincode:";
+
+  window.open("https://wa.me/919475855619?text=" + message, "_blank");
+}
+</script>
 
 </head>
 
 <body>
 
 <h1>🐠 Aquatic Guru</h1>
-<p>Premium Fish & Aquarium Plants</p>
 
-<!-- PLANTS SECTION -->
+<!-- CART BOX -->
+<div id="cart">
+<h3>🛒 Cart</h3>
+<div id="cartItems"></div>
+<p id="total">Total: ₹0</p>
+<button class="checkout" onclick="checkout()">Order on WhatsApp</button>
+</div>
+
+<!-- PLANTS -->
 <div class="section">
-<h2>🌿 Aquarium Plants</h2>
+<h2>🌿 Plants</h2>
 
 <div class="card">
 <h3>Hygrophila Difformis</h3>
-<img src="plant1.jpg">
-<p>Price: ₹50</p>
-
-<a href="https://wa.me/91XXXXXXXXXX?text=Hello%20Aquatic%20Guru,%0AI%20want%20to%20order:%0APlant:%20Hygrophila%20Difformis%0AQuantity:%201%0APrice:%20₹50%0A%0AMy%20Name:%0AMy%20Address:%0AMy%20Pincode:%0A%0APlease%20confirm%20availability." target="_blank">
-<button>Order Now</button>
-</a>
-
+<p>₹50</p>
+<button class="add" onclick="addToCart('Hygrophila Difformis',50)">Add to Cart</button>
 </div>
 
 <div class="card">
 <h3>Limnophila Aquatica</h3>
-<img src="plant2.jpg">
-<p>Price: ₹60</p>
-
-<a href="https://wa.me/91XXXXXXXXXX?text=Hello%20Aquatic%20Guru,%0AI%20want%20to%20order:%0APlant:%20Limnophila%20Aquatica%0AQuantity:%201%0APrice:%20₹60%0A%0AMy%20Name:%0AMy%20Address:%0AMy%20Pincode:%0A%0APlease%20confirm%20availability." target="_blank">
-<button>Order Now</button>
-</a>
-
+<p>₹60</p>
+<button class="add" onclick="addToCart('Limnophila Aquatica',60)">Add to Cart</button>
 </div>
 
 </div>
 
-<!-- FISH SECTION -->
+<!-- GUPPIES -->
 <div class="section">
-<h2>🐟 Fish Collection</h2>
-
-<!-- GUPPY SECTION -->
-<h2>Guppies</h2>
+<h2>🐟 Guppies</h2>
 
 <div class="card">
-<h3>24K Gold Dumbo Ear Guppy</h3>
-<img src="guppy1.jpg">
-<p>Price: ₹400 per pair</p>
-
-<a href="https://wa.me/91XXXXXXXXXX?text=Hello%20Aquatic%20Guru,%0AI%20want%20to%20order:%0AFish:%2024K%20Gold%20Dumbo%20Ear%20Guppy%0AQuantity:%201%20pair%0APrice:%20₹400%0A%0AMy%20Name:%0AMy%20Address:%0AMy%20Pincode:%0A%0APlease%20confirm%20availability." target="_blank">
-<button>Order Now</button>
-</a>
-
+<h3>24K Gold Dumbo Ear</h3>
+<p>₹400 (pair)</p>
+<button class="add" onclick="addToCart('24K Gold Dumbo Ear Guppy',400)">Add to Cart</button>
 </div>
 
 <div class="card">
-<h3>Platinum Red Tail Dumbo Ear Guppy</h3>
-<img src="guppy2.jpg">
-<p>Price: ₹350 per pair</p>
-
-<a href="https://wa.me/919475855619?text=Hello%20Aquatic%20Guru,%0AI%20want%20to%20order:%0AFish:%20Platinum%20Red%20Tail%20Dumbo%20Ear%20Guppy%0AQuantity:%201%20pair%0APrice:%20₹350%0A%0AMy%20Name:%0AMy%20Address:%0AMy%20Pincode:%0A%0APlease%20confirm%20availability." target="_blank">
-<button>Order Now</button>
-</a>
-
+<h3>Platinum Red Tail Dumbo</h3>
+<p>₹350 (pair)</p>
+<button class="add" onclick="addToCart('Platinum Red Tail Dumbo Ear Guppy',350)">Add to Cart</button>
 </div>
 
 </div>
