@@ -6,21 +6,40 @@
 
 <style>
 body { font-family: Arial; background:#0f172a; color:white; text-align:center; }
-.section { margin:20px; padding:20px; background:#1e293b; border-radius:10px; }
-.card { background:#334155; padding:15px; margin:10px; border-radius:10px; }
-button { padding:10px; margin:5px; border:none; border-radius:5px; cursor:pointer; }
-.add { background:#38bdf8; color:white; }
-.checkout { background:#22c55e; color:white; }
-img { width:200px; border-radius:10px; }
 
-#cart {
+.section { margin:20px; padding:20px; background:#1e293b; border-radius:10px; }
+
+.card { background:#334155; padding:15px; margin:10px; border-radius:10px; }
+
+button { padding:10px; margin:5px; border:none; border-radius:5px; cursor:pointer; }
+
+.add { background:#38bdf8; color:white; }
+
+.checkout { background:#22c55e; color:white; }
+
+/* Cart Button */
+#cartBtn {
   position: fixed;
-  right: 10px;
-  top: 10px;
-  background: #111;
-  padding: 15px;
-  border-radius: 10px;
+  right: 15px;
+  top: 15px;
+  background: #22c55e;
+  padding: 10px;
+  border-radius: 50%;
 }
+
+/* Popup Cart */
+#cartPopup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #111;
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+}
+
 </style>
 
 <script>
@@ -28,17 +47,25 @@ let cart = [];
 
 function addToCart(name, price) {
   cart.push({name, price});
-  alert(name + " added to cart");
+  alert(name + " added");
+}
+
+function openCart() {
+  document.getElementById("cartPopup").style.display = "block";
   updateCart();
 }
 
+function closeCart() {
+  document.getElementById("cartPopup").style.display = "none";
+}
+
 function updateCart() {
-  let cartDiv = document.getElementById("cartItems");
-  cartDiv.innerHTML = "";
+  let list = document.getElementById("cartItems");
+  list.innerHTML = "";
   let total = 0;
 
   cart.forEach(item => {
-    cartDiv.innerHTML += item.name + " - ₹" + item.price + "<br>";
+    list.innerHTML += item.name + " - ₹" + item.price + "<br>";
     total += item.price;
   });
 
@@ -46,11 +73,6 @@ function updateCart() {
 }
 
 function checkout() {
-  if(cart.length === 0){
-    alert("Cart is empty");
-    return;
-  }
-
   let message = "Hello Aquatic Guru,%0AI want to order:%0A%0A";
   let total = 0;
 
@@ -71,12 +93,16 @@ function checkout() {
 
 <h1>🐠 Aquatic Guru</h1>
 
-<!-- CART BOX -->
-<div id="cart">
-<h3>🛒 Cart</h3>
+<!-- CART BUTTON -->
+<button id="cartBtn" onclick="openCart()">🛒</button>
+
+<!-- POPUP CART -->
+<div id="cartPopup">
+<h3>🛒 Your Cart</h3>
 <div id="cartItems"></div>
 <p id="total">Total: ₹0</p>
-<button class="checkout" onclick="checkout()">Order on WhatsApp</button>
+<button class="checkout" onclick="checkout()">Order</button>
+<button onclick="closeCart()">Close</button>
 </div>
 
 <!-- PLANTS -->
@@ -103,15 +129,27 @@ function checkout() {
 
 <div class="card">
 <h3>24K Gold Dumbo Ear</h3>
-<p>₹400 (pair)</p>
+<p>₹400</p>
 <button class="add" onclick="addToCart('24K Gold Dumbo Ear Guppy',400)">Add to Cart</button>
 </div>
 
 <div class="card">
 <h3>Platinum Red Tail Dumbo</h3>
-<p>₹350 (pair)</p>
+<p>₹350</p>
 <button class="add" onclick="addToCart('Platinum Red Tail Dumbo Ear Guppy',350)">Add to Cart</button>
 </div>
+
+</div>
+
+<!-- LOCATION SECTION -->
+<div class="section">
+<h2>📍 Our Location</h2>
+
+<p>Click below to open in Google Maps</p>
+
+<a href="https://maps.google.com/?q=YOUR_LOCATION_HERE" target="_blank">
+<button>Open in Maps</button>
+</a>
 
 </div>
 
