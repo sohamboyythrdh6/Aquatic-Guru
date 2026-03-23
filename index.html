@@ -1,8 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Aquatic Guru</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body { font-family: Arial; background:#0f172a; color:white; text-align:center; }
+.section { margin:20px; padding:20px; background:#1e293b; border-radius:10px; }
+.card { background:#334155; padding:15px; margin:10px; border-radius:10px; }
+button { padding:10px; margin:5px; border:none; border-radius:5px; cursor:pointer; }
+.add { background:#38bdf8; color:white; }
+.checkout { background:#22c55e; color:white; }
+
+#cartBtn {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: #22c55e;
+  border-radius: 50%;
+}
+
+#cartPopup {
+  display:none;
+  position: fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background:#111;
+  padding:20px;
+  border-radius:10px;
+  width:300px;
+}
+</style>
+
 <script>
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 let delivery = 0;
-
-const sellerPin = "721152";
 
 function saveCart() {
   localStorage.setItem("cart", JSON.stringify(cart));
@@ -48,11 +81,12 @@ function calculateDelivery(){
   let pin = document.getElementById("pincode").value;
 
   if(pin.length !== 6){
-    alert("Enter valid pincode");
+    delivery = 0;
+    updateCart();
     return;
   }
 
-  // RESET delivery first
+  // Reset
   delivery = 0;
 
   if(pin === "721152"){
@@ -78,7 +112,7 @@ function checkout(){
   let pin = document.getElementById("pincode").value;
 
   if(pin.length !== 6){
-    alert("Enter pincode first");
+    alert("Enter valid pincode first");
     return;
   }
 
@@ -86,14 +120,14 @@ function checkout(){
   let total=0;
 
   cart.forEach(item=>{
-    msg += item.name+" - ₹"+item.price+"%0A";
-    total += item.price;
+    msg+=item.name+" - ₹"+item.price+"%0A";
+    total+=item.price;
   });
 
-  msg += "%0ADelivery: ₹"+delivery;
-  msg += "%0ATotal: ₹"+(total+delivery);
-  msg += "%0A%0APincode: "+pin;
-  msg += "%0AMy Name:%0AMy Address:%0AShare Location:";
+  msg+="%0ADelivery: ₹"+delivery;
+  msg+="%0ATotal: ₹"+(total+delivery);
+  msg+="%0A%0APincode: "+pin;
+  msg+="%0AMy Name:%0AMy Address:%0AShare Location:";
 
   window.open("https://wa.me/91XXXXXXXXXX?text="+msg,"_blank");
 }
@@ -102,3 +136,70 @@ window.onload = function(){
   updateCart();
 }
 </script>
+
+</head>
+
+<body>
+
+<h1>🐠 Aquatic Guru</h1>
+<p>Premium Fish & Aquarium Plants</p>
+
+<!-- CART BUTTON -->
+<button id="cartBtn" onclick="openCart()">🛒</button>
+
+<!-- CART POPUP -->
+<div id="cartPopup">
+<h3>🛒 Cart</h3>
+
+<div id="cartItems"></div>
+
+<input type="number" id="pincode" placeholder="Enter Pincode" oninput="calculateDelivery()">
+<br><br>
+
+<p id="subtotal">Subtotal: ₹0</p>
+<p id="delivery">Delivery: ₹0</p>
+<p id="total">Total: ₹0</p>
+
+<button class="checkout" onclick="checkout()">Order</button>
+<button onclick="clearCart()">Clear Cart</button>
+<button onclick="closeCart()">Close</button>
+</div>
+
+<!-- PLANTS -->
+<div class="section">
+<h2>🌿 Aquarium Plants</h2>
+
+<div class="card">
+<h3>Hygrophila Difformis</h3>
+<p>₹50</p>
+<button class="add" onclick="addToCart('Hygrophila Difformis',50)">Add to Cart</button>
+</div>
+
+<div class="card">
+<h3>Limnophila Aquatica</h3>
+<p>₹60</p>
+<button class="add" onclick="addToCart('Limnophila Aquatica',60)">Add to Cart</button>
+</div>
+
+</div>
+
+<!-- GUPPIES -->
+<div class="section">
+<h2>🐟 Guppies</h2>
+
+<div class="card">
+<h3>24K Gold Dumbo Ear Guppy</h3>
+<p>₹400 (pair)</p>
+<button class="add" onclick="addToCart('24K Gold Dumbo Ear Guppy',400)">Add to Cart</button>
+</div>
+
+<div class="card">
+<h3>Platinum Red Tail Dumbo Ear Guppy</h3>
+<p>₹350 (pair)</p>
+<button class="add" onclick="addToCart('Platinum Red Tail Dumbo Ear Guppy',350)">Add to Cart</button>
+</div>
+
+</div>
+
+</body>
+</html>
